@@ -72,9 +72,9 @@ def process(request):
     try:
         write_cfg(os.path.join(cfg_path), jsondata)
     except Exception as e:
-        return None, f"Error saving down file to `{cfg_path}: {e}`"
+        return None, f"Error saving annotation config: {e}"
 
-    return new_cfg, f"Successfully saved config to `{cfg_path}`"
+    return new_cfg, "Successfully saved annotation config"
 
 
 if __name__ == "__main__":
@@ -87,6 +87,6 @@ if __name__ == "__main__":
     cfg_path = os.path.join(char_folder, "char_cfg.yaml")
 
     if not os.path.isfile(cfg_path):
-        print(f"[Error] File not found. Expected config file at: {cfg_path}")
+        print("[Error] Annotation config file not found.")
         sys.exit(1)
     app.run(port=args.port, debug=False)
