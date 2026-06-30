@@ -4,10 +4,14 @@
 
 import animated_drawings.render
 import logging
+import os
 from pathlib import Path
 import sys
 import yaml
 from pkg_resources import resource_filename
+
+
+OUTPUT_FORMAT = os.getenv('OUTPUT_FORMAT', 'gif').lower()
 
 
 def annotations_to_animation(char_anno_dir: str, motion_cfg_fn: str, retarget_cfg_fn: str):
@@ -24,11 +28,15 @@ def annotations_to_animation(char_anno_dir: str, motion_cfg_fn: str, retarget_cf
     }
 
     # create mvc config
+    output_name = f"video.{OUTPUT_FORMAT if OUTPUT_FORMAT in {'gif', 'mp4'} else 'gif'}"
     mvc_cfg = {
         'scene': {'ANIMATED_CHARACTERS': [animated_drawing_dict]},  # add the character to the scene
         'controller': {
             'MODE': 'video_render',  # 'video_render' or 'interactive'
-            'OUTPUT_VIDEO_PATH': str(Path(char_anno_dir, 'video.gif').resolve())}  # set the output location
+            'OUTPUT_VIDEO_PATH': str(Path(char_anno_dir, output_name).resolve())},  # set the output location
+        'view': {
+            'USE_MESA': True
+        }
     }
 
     # write the new mvc config file out

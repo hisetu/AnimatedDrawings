@@ -21,7 +21,7 @@ RUN conda install python=3.8.13 -y
 
 # install python dependencies
 RUN pip install openmim
-RUN pip install torch==2.0.0
+RUN pip install --default-timeout=1000 --extra-index-url https://download.pytorch.org/whl/cpu torch==2.0.0+cpu torchvision==0.15.1+cpu
 RUN mim install mmcv-full==1.7.0
 RUN pip install mmdet==2.27.0
 RUN pip install torchserve
@@ -33,7 +33,6 @@ RUN pip install -r requirements.txt
 RUN python setup.py install
 WORKDIR /
 RUN pip install mmpose==0.29.0
-RUN pip install torchvision==0.15.1  # solve torch version problem
 RUN pip install numpy==1.24.4  #solve numpy version problem
 
 # prep torchserve

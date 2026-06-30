@@ -3,6 +3,7 @@
 # LICENSE file in the root directory of this source tree.
 
 import sys
+import os
 import requests
 import cv2
 import json
@@ -12,6 +13,9 @@ from scipy import ndimage
 from pathlib import Path
 import yaml
 import logging
+
+
+TORCHSERVE_URL = os.getenv('TORCHSERVE_URL', 'http://localhost:8080').rstrip('/')
 
 
 def image_to_annotations(img_fn: str, out_dir: str) -> None:
@@ -48,7 +52,7 @@ def image_to_annotations(img_fn: str, out_dir: str) -> None:
     # convert to bytes and send to torchserve
     img_b = cv2.imencode('.png', img)[1].tobytes()
     request_data = {'data': img_b}
-    resp = requests.post("http://localhost:8080/predictions/drawn_humanoid_detector", files=request_data, verify=False)
+    resp = requests.post(f"{TORCHSERVE_URL}/predictions/drawn_humanoid_detector", files=request_data, verify=False)
     if resp is None or resp.status_code >= 300:
         raise Exception(f"Failed to get bounding box, please check if the 'docker_torchserve' is running and healthy, resp: {resp}")
 
@@ -92,7 +96,7 @@ def image_to_annotations(img_fn: str, out_dir: str) -> None:
 
     # send cropped image to pose estimator
     data_file = {'data': cv2.imencode('.png', cropped)[1].tobytes()}
-    resp = requests.post("http://localhost:8080/predictions/drawn_humanoid_pose_estimator", files=data_file, verify=False)
+    resp = requests.post(f"{TORCHSERVE_URL}/predictions/drawn_humanoid_pose_estimator", files=data_file, verify=False)
     if resp is None or resp.status_code >= 300:
         raise Exception(f"Failed to get skeletons, please check if the 'docker_torchserve' is running and healthy, resp: {resp}")
 
