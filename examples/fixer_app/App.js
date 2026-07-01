@@ -7,6 +7,29 @@ import React from "react";
 import Circle from "./Pose/Circle";
 import Line from "./Pose/Line";
 
+const JOINT_LABELS = {
+  root: "根部",
+  hip: "骨盆",
+  torso: "軀幹",
+  neck: "脖子",
+  left_shoulder: "左肩",
+  right_shoulder: "右肩",
+  left_elbow: "左手肘",
+  right_elbow: "右手肘",
+  left_hand: "左手",
+  right_hand: "右手",
+  left_hip: "左髖",
+  right_hip: "右髖",
+  left_knee: "左膝",
+  right_knee: "右膝",
+  left_foot: "左腳",
+  right_foot: "右腳",
+};
+
+function getJointLabel(name) {
+  return JOINT_LABELS[name] || name?.replace("l_", "左 ")?.replace("r_", "右 ");
+}
+
 export default function App() {
   // grab global vars inserted by the Flask app
   const cfg = window.cfg;
@@ -80,7 +103,7 @@ export default function App() {
           </svg>
           {hoveredJoint ? (
             <div className="tooltip">
-              {hoveredJoint?.replace("l_", "left ")?.replace("r_", "right ")}
+              控制點：{getJointLabel(hoveredJoint)}
             </div>
           ) : null}
         </div>
@@ -93,7 +116,7 @@ export default function App() {
           id="data"
           name="data"
         />
-        <button type="submit">Submit</button>
+        <button type="submit">儲存骨架</button>
       </form>
     </>
   );
